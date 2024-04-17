@@ -1,95 +1,57 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import { useEffect, useState } from "react";
+import CustomerHeader from "./_components/CustomerHeader";
+import Footer from "./_components/Footer";
+
+interface LocationDataType
+{
+  result:string[]
+}
+
 
 export default function Home() {
+  const [location, setLocation] = useState<LocationDataType[]>([])
+  const [selectedLocation, setSelectedLocation] = useState<String>('')
+  const [showLocation, setShowLocation] = useState<boolean>(false)
+
+  useEffect(()=>{
+    loadLocations()
+  },[])
+
+  const loadLocations = async () => {
+    let response = await fetch("http://localhost:3000/api/customer/locations")
+    response = await response.json()
+    if(response.success)
+    {
+      setLocation(response.result)
+    }
+  }
+
+  const handleLocation = (city:string) => {
+    setSelectedLocation(city)
+    setShowLocation(false)
+  }
+
+
+console.log(location)
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main>
+      <CustomerHeader/>
+      <div className="main-page-banner">
+        <h1>Food Delivery App</h1>
+        <div className="input-wrapper">
+          <input type="text" value={selectedLocation} onClick={()=> setShowLocation(true)} className="select-input" placeholder="Select Place"/>
+          <ul className="location-list">
+            {
+             showLocation && location.map((city) => (
+                <li onClick={()=>handleLocation(city)}>{city}</li>
+              ))
+            }
+          </ul>
+          <input type="text" className="search-input" placeholder="Enter Food Or Restaurant Name"/>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      <Footer/>
     </main>
   );
 }

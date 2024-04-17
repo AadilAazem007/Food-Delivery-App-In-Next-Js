@@ -1,0 +1,52 @@
+.header-wrapper
+{
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-wrapper ul{
+    display: flex;
+}
+
+.header-wrapper ul li{
+    list-style-type: none;
+    padding: 5px;
+}
+
+.header-wrapper ul li a{
+    text-decoration: none;
+    color:red
+}
+
+.footer-wrapper{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    background-color: #f3cbcb;
+}
+.input-error{
+    color:red;
+    position: relative;
+    font-size: 20px;
+}
+.input-success{
+    color:green;
+    position: relative;
+    font-size: 15px;
+}
+
+table, th, td{
+    padding: 10px;
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+table button {
+    margin:5px
+}
+
+table img{
+    width:80px
+}
