@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import CustomerHeader from "./_components/CustomerHeader";
 import Footer from "./_components/Footer";
+import { useRouter } from "next/navigation";
 
 interface LocationDataType
 {
@@ -21,11 +22,18 @@ interface RestaurantType
   __v?: string
 }
 
+interface LocationRestaurantType 
+{
+  location?: string,
+  restaurant?: string
+}
+
 export default function Home() {
   const [location, setLocation] = useState<LocationDataType[]>([])
   const [selectedLocation, setSelectedLocation] = useState<String>('')
   const [showLocation, setShowLocation] = useState<boolean>(false)
   const [restaurant, setRestaurant] = useState<RestaurantType[]>([])
+  const router = useRouter()
 
   useEffect(()=>{
     loadLocations()
@@ -41,8 +49,19 @@ export default function Home() {
     }
   }
 
-  const loadRestaurant = async () => {
-    let response = await fetch("http://localhost:3000/api/customer")
+  const loadRestaurant = async (params?:LocationRestaurantType) => {
+    console.log(params)
+    let url = "http://localhost:3000/api/customer"
+    if(params?.location)
+    {
+      url = url+"?location="+params.location
+    }
+    else if(params?.restaurant)
+    {
+      url = url+"?restaurant="+params.restaurant
+    }
+
+    let response = await fetch(url)
     response = await response.json()
     if(response.success)
     {
@@ -53,6 +72,7 @@ export default function Home() {
   const handleLocation = (city:string) => {
     setSelectedLocation(city)
     setShowLocation(false)
+    loadRestaurant({location:city})
   }
 
   return (
@@ -69,13 +89,13 @@ export default function Home() {
               ))
             }
           </ul>
-          <input type="text" className="search-input" placeholder="Enter Food Or Restaurant Name"/>
+          <input type="text" className="search-input" onChange={(e) => loadRestaurant({restaurant:e.target.value})} placeholder="Enter Food Or Restaurant Name"/>
         </div>
       </div>
       <div className="restaurant-list-container">
         {
           restaurant.map((item:RestaurantType, key) => (
-            <div className="restaurant-wrapper" key={key}>
+            <div className="restaurant-wrapper" key={key} onClick={(e) => router.push(`explore/${item.restaurantName}`)}>
               <div className="heading-wrapper">
                 <h3>{item.restaurantName}</h3>
                 <h5>{item.email}</h5>
